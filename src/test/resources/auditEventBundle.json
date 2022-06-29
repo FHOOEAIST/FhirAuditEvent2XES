@@ -1,0 +1,98 @@
+{
+  "resourceType": "Bundle",
+  "id": "919ef4e3-41f1-4b8b-b74a-d87d3ec2d413",
+  "meta": {
+    "lastUpdated": "2022-06-28T11:13:56.800+00:00"
+  },
+  "type": "searchset",
+  "total": 2,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/58",
+      "resource": {
+        "resourceType": "AuditEvent",
+        "id": "58",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2022-06-28T11:05:23.666+00:00",
+          "source": "#ixkqgrXK2Vw6QjwM"
+        },
+        "occurredPeriod": {
+          "start": "2017-01-01T00:00:00.000Z",
+          "end": "2017-01-02T00:00:00.000Z"
+        },
+        "basedOn": [
+          {
+            "reference": "Task/57"
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/56"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/59",
+      "resource": {
+        "resourceType": "AuditEvent",
+        "id": "59",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2022-06-28T11:13:55.263+00:00",
+          "source": "#EQpTsC89EyRVtUli"
+        },
+        "occurredPeriod": {
+          "start": "2017-01-01T00:00:00.000Z",
+          "end": "2017-01-02T00:00:00.000Z"
+        },
+        "basedOn": [
+          {
+            "reference": "Task/58"
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/56"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/58",
+      "resource": {
+        "resourceType": "AuditEvent",
+        "id": "58",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2022-06-28T11:05:23.666+00:00",
+          "source": "#ixkqgrXK2Vw6QjwM"
+        },
+        "occurredPeriod": {
+          "start": "2017-01-01T00:00:00.000Z",
+          "end": "2017-01-02T00:00:00.000Z"
+        },
+        "basedOn": [
+          {
+            "reference": "Task/57"
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/59"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}
