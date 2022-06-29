@@ -1,14 +1,54 @@
-# <Project name >
+# Fhir Audit Event to XES
 
-<project description>
+This project contains methods to convert a set of audit events into a XES representation.
 
 ## Getting Started
 
-<Write how to get started. e.g. which dependencies are required, how you can build the project. and how you can start.>
+To use the project, simply include the maven dependency on the project.
+
+```xml
+<dependency>
+    <groupId>science.aist</groupId>
+    <artifactId>fhir-audit-event-to-xes</artifactId>
+    <version>1.0.0</version>
+    <scope>compile</scope> <!-- Note: this is default -->
+</dependency>
+```
+
+This then enables you to access our service class, to convert from AuditEvents to XES Logs.
+
+```java
+// Create a new Fhir service
+var service = new FhirAuditEventsToXESLogService();
+// create some outputstream where to write the results
+var outputStream = new ByteArrayOutputStream();
+// get the input stream to some auditEvent bundle:
+var inputStream = ...
+        
+// Execute the service method
+service.convertFhirAuditEventsToXESLog(inputStream, outputStream);
+
+// (Optional - depending on choosen output stream): Get the data out of the stream
+String res = outputStream.toString(StandardCharsets.UTF_8);
+```
+
+If you already have the AuditEvents as java classes you can also create the log out of these.
+
+```java
+var service = new FhirAuditEventsToXESLogService();
+Collection<AuditEvent> auditEvents = ...
+
+var log = service.convertFhirAuditEventsToXESLog(auditEvents);
+
+// (Optional): Write log to some output stream:
+var outputStream = ...
+new LogRepository().save(new ObjectFactory.createLog(log), outputStream);
+```
+
 
 ## FAQ
 
-If you have any questions, please checkout our <insert FAQ link here if using maven site, otherwise write a small FAQ section here>.
+If you have any questions, please check out our [FAQ](https://fhooeaist.github.io/FhirAuditEvent2XES/faq.html) section.
 
 ## Contributing
 
@@ -16,7 +56,7 @@ If you have any questions, please checkout our <insert FAQ link here if using ma
    
 ## License
 
-Copyright (c) 2020 the original author or authors.
+Copyright (c) 2022 the original author or authors.
 DO NOT ALTER OR REMOVE COPYRIGHT NOTICES.
 
 This Source Code Form is subject to the terms of the Mozilla Public
