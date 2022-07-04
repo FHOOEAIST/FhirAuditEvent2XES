@@ -13,14 +13,12 @@ import lombok.AllArgsConstructor;
 import org.hl7.fhir.r5.model.AuditEvent;
 import science.aist.gtf.transformation.Transformer;
 import science.aist.gtf.transformation.renderer.TransformationRender;
-import science.aist.xes.model.ExtensionType;
-import science.aist.xes.model.LogType;
-import science.aist.xes.model.ObjectFactory;
-import science.aist.xes.model.TraceType;
+import science.aist.xes.model.*;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,23 +34,38 @@ public class FhirAuditEventsToXESLogTransformer implements Transformer<Collectio
 
     private final ObjectFactory factory;
     private final TransformationRender<TraceType, TraceType, List<AuditEvent>, List<AuditEvent>> traceRenderer;
-    private final Function<AuditEvent, String> groupingSelector;
+
+    private final Function<AuditEvent, String> conceptNameResolver;
+    private final Function<AuditEvent, ?> groupingSelector;
+
 
     @Override
     public LogType applyTransformation(Collection<AuditEvent> auditEvents) {
-        LogType logType = factory.createLogType();
+        // Create a mapping for the different concept Names at log level
+        Map<String, List<AuditEvent>> collect = auditEvents.stream().collect(Collectors.groupingBy(conceptNameResolver));
+        if (collect.size() > 1) {
+            throw new IllegalStateException("XES logs do not support more than one concept:name at log level. Consider changing conceptNameResolver");
+        }
 
-        // Define base attributes
-        logType.setXesVersion(BigDecimal.valueOf(1.0));
+        return collect.entrySet().stream().map(conceptNameAuditEventElements -> {
+            LogType logType = factory.createLogType();
 
-        // create extensions types
-        Stream.of(timeExtension(), lifecycleExtension(), conceptExtension()).forEach(logType.getExtension()::add);
+            // Define base attributes
+            logType.setXesVersion(BigDecimal.valueOf(1.0));
 
-        // create traces
-        auditEvents.stream().collect(Collectors.groupingBy(groupingSelector)).forEach(
-                (encounter, events) -> logType.getTrace().add(traceRenderer.renderElement(events, events))
-        );
-        return logType;
+            // create extensions types
+            Stream.of(timeExtension(), lifecycleExtension(), conceptExtension()).forEach(logType.getExtension()::add);
+            AttributeStringType conceptName = factory.createAttributeStringType();
+            conceptName.setKey("concept:name");
+            conceptName.setValue(conceptNameAuditEventElements.getKey());
+            logType.getStringOrDateOrInt().add(conceptName);
+
+            // create traces
+            conceptNameAuditEventElements.getValue().stream().collect(Collectors.groupingBy(groupingSelector)).forEach(
+                    (ignore, events) -> logType.getTrace().add(traceRenderer.renderElement(events, events))
+            );
+            return logType;
+        }).findFirst().orElseThrow();
     }
 
     private ExtensionType timeExtension() {

@@ -17,6 +17,7 @@ import science.aist.xes.model.EventType;
 import science.aist.xes.model.ObjectFactory;
 import science.aist.xes.model.TraceType;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -30,7 +31,7 @@ import java.util.function.Function;
 public class TraceRenderer implements TransformationRender<TraceType, TraceType, List<AuditEvent>, List<AuditEvent>> {
 
     private final ObjectFactory factory;
-    private final TransformationRender<EventType, EventType, List<AuditEvent>, AuditEvent> eventRenderer;
+    private final TransformationRender<List<EventType>, EventType, List<AuditEvent>, AuditEvent> eventRenderer;
     private final Function<AuditEvent, String> conceptNameResolver;
 
     @Override
@@ -55,7 +56,10 @@ public class TraceRenderer implements TransformationRender<TraceType, TraceType,
         traceType.getStringOrDateOrInt().add(attributeStringType);
 
         // Create the events
-        currentElement.stream().map(auditEvent -> eventRenderer.renderElement(currentElement, auditEvent)).forEach(traceType.getEvent()::add);
+        currentElement.stream()
+                .map(auditEvent -> eventRenderer.renderElement(currentElement, auditEvent))
+                .flatMap(Collection::stream)
+                .forEach(traceType.getEvent()::add);
 
         return traceType;
     }

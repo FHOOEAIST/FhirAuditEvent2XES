@@ -9,6 +9,7 @@
 
 package science.aist.fhirauditeventtoxes;
 
+import org.hl7.fhir.r5.model.AuditEvent;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -26,7 +27,11 @@ public class FhirAuditEventsToXESLogServiceTest {
     @Test
     public void testConvertFhirAuditEventsToXESLog() {
         // given
-        FhirAuditEventsToXESLogService service = new FhirAuditEventsToXESLogService();
+        FhirAuditEventsToXESLogService service = new FhirAuditEventsToXESLogService(
+                "getBasedOnFirstRep.getReference",
+                "getCode.getCodingFirstRep.getDisplay",
+                "getEncounter.getReference"
+                );
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         // when

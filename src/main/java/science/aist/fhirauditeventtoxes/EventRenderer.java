@@ -11,13 +11,13 @@ package science.aist.fhirauditeventtoxes;
 
 import lombok.AllArgsConstructor;
 import org.hl7.fhir.r5.model.AuditEvent;
-import org.hl7.fhir.r5.model.Reference;
 import science.aist.gtf.transformation.renderer.TransformationRender;
 import science.aist.xes.model.AttributeDateType;
 import science.aist.xes.model.AttributeStringType;
 import science.aist.xes.model.EventType;
 import science.aist.xes.model.ObjectFactory;
 
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
@@ -28,7 +28,7 @@ import java.util.function.Function;
  * @since 1.0
  */
 @AllArgsConstructor
-public class EventRenderer implements TransformationRender<EventType, EventType, List<AuditEvent>, AuditEvent> {
+public class EventRenderer implements TransformationRender<List<EventType>, EventType, List<AuditEvent>, AuditEvent> {
 
     /**
      * XML object factory to create the element
@@ -38,11 +38,19 @@ public class EventRenderer implements TransformationRender<EventType, EventType,
     /**
      * The resolver method for the basedOnReference to convert it into a string representation
      */
-    private final Function<Reference, String> baseOnReferenceResolver;
+    private final Function<AuditEvent, String> conceptNameResolver;
 
     @Override
-    public EventType renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
-        return mapProperties(createElement(), auditEvents, currentElement);
+    public List<EventType> renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
+        EventType start = mapProperties(createElement(), auditEvents, currentElement);
+        addTimestamp(start, currentElement, ae -> ae.getOccurredPeriod().getStart());
+        addLifecycleTransition(start, currentElement, ae -> "start");
+
+        EventType end = mapProperties(createElement(), auditEvents, currentElement);
+        addTimestamp(end, currentElement, ae -> ae.getOccurredPeriod().getEnd());
+        addLifecycleTransition(end, currentElement, ae -> "complete");
+
+        return List.of(start, end);
     }
 
     @Override
@@ -53,20 +61,25 @@ public class EventRenderer implements TransformationRender<EventType, EventType,
     @Override
     public EventType mapProperties(EventType eventType, List<AuditEvent> auditEvents, AuditEvent currentElement) {
         AttributeStringType conceptName = factory.createAttributeStringType();
+
         conceptName.setKey("concept:name");
-        conceptName.setValue(baseOnReferenceResolver.apply(currentElement.getBasedOnFirstRep()));
+        conceptName.setValue(conceptNameResolver.apply(currentElement));
         eventType.getStringOrDateOrInt().add(conceptName);
 
-        AttributeStringType lifecycleTransition = factory.createAttributeStringType();
-        lifecycleTransition.setKey("lifecycle:transition");
-        lifecycleTransition.setValue("complete");
-        eventType.getStringOrDateOrInt().add(lifecycleTransition);
+        return eventType;
+    }
 
+    private void addTimestamp(EventType eventType, AuditEvent currentElement, Function<AuditEvent, Date> timestampSelector) {
         AttributeDateType timestamp = factory.createAttributeDateType();
         timestamp.setKey("time:timestamp");
-        timestamp.setValue(DateUtil.dateToGregorianCalendar(currentElement.getOccurredPeriod().getEnd()));
+        timestamp.setValue(DateUtil.dateToGregorianCalendar(timestampSelector.apply(currentElement)));
         eventType.getStringOrDateOrInt().add(timestamp);
+    }
 
-        return eventType;
+    private void addLifecycleTransition(EventType eventType, AuditEvent currentElement, Function<AuditEvent, String> lifecycleTransitionSelector) {
+        AttributeStringType lifecycleTransition = factory.createAttributeStringType();
+        lifecycleTransition.setKey("lifecycle:transition");
+        lifecycleTransition.setValue(lifecycleTransitionSelector.apply(currentElement));
+        eventType.getStringOrDateOrInt().add(lifecycleTransition);
     }
 }

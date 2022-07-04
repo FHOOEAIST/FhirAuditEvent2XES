@@ -14,81 +14,114 @@
   ],
   "entry": [
     {
-      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/58",
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/62",
       "resource": {
         "resourceType": "AuditEvent",
-        "id": "58",
+        "id": "62",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2022-06-28T11:05:23.666+00:00",
-          "source": "#ixkqgrXK2Vw6QjwM"
+          "lastUpdated": "2022-07-04T08:31:27.540+00:00",
+          "source": "#thIckJoP8Kbuz6Sl"
+        },
+        "code": {
+          "coding": [ {
+            "system": "BPMN",
+            "code": "12345",
+            "display": "Some BPMN Task"
+          } ],
+          "text": "Executing Some BPMN Task with id 12345"
         },
         "occurredPeriod": {
           "start": "2017-01-01T00:00:00.000Z",
           "end": "2017-01-02T00:00:00.000Z"
         },
-        "basedOn": [
-          {
-            "reference": "Task/57"
-          }
-        ],
+        "basedOn": [ {
+          "reference": "CarePlan/60"
+        } ],
         "encounter": {
           "reference": "Encounter/56"
-        }
+        },
+        "agent": [ {
+          "who": {
+            "reference": "Practitioner/61"
+          }
+        } ]
       },
       "search": {
         "mode": "match"
       }
     },
     {
-      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/59",
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/62",
       "resource": {
         "resourceType": "AuditEvent",
-        "id": "59",
+        "id": "62",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2022-06-28T11:13:55.263+00:00",
-          "source": "#EQpTsC89EyRVtUli"
+          "lastUpdated": "2022-07-04T08:31:27.540+00:00",
+          "source": "#thIckJoP8Kbuz6Sl"
+        },
+        "code": {
+          "coding": [ {
+            "system": "BPMN",
+            "code": "67890",
+            "display": "Some Other BPMN Task"
+          } ],
+          "text": "Executing Some Other BPMN Task with id 67890"
         },
         "occurredPeriod": {
           "start": "2017-01-01T00:00:00.000Z",
           "end": "2017-01-02T00:00:00.000Z"
         },
-        "basedOn": [
-          {
-            "reference": "Task/58"
-          }
-        ],
+        "basedOn": [ {
+          "reference": "CarePlan/60"
+        } ],
         "encounter": {
           "reference": "Encounter/56"
-        }
+        },
+        "agent": [ {
+          "who": {
+            "reference": "Practitioner/61"
+          }
+        } ]
       },
       "search": {
         "mode": "match"
       }
     },
     {
-      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/58",
+      "fullUrl": "http://aist-partner.projekte.fh-hagenberg.at:8082/fhir/AuditEvent/62",
       "resource": {
         "resourceType": "AuditEvent",
-        "id": "58",
+        "id": "62",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2022-06-28T11:05:23.666+00:00",
-          "source": "#ixkqgrXK2Vw6QjwM"
+          "lastUpdated": "2022-07-04T08:31:27.540+00:00",
+          "source": "#thIckJoP8Kbuz6Sl"
+        },
+        "code": {
+          "coding": [ {
+            "system": "BPMN",
+            "code": "12345",
+            "display": "Some BPMN Task"
+          } ],
+          "text": "Executing Some BPMN Task with id 12345"
         },
         "occurredPeriod": {
           "start": "2017-01-01T00:00:00.000Z",
           "end": "2017-01-02T00:00:00.000Z"
         },
-        "basedOn": [
-          {
-            "reference": "Task/57"
-          }
-        ],
+        "basedOn": [ {
+          "reference": "CarePlan/60"
+        } ],
         "encounter": {
-          "reference": "Encounter/59"
-        }
+          "reference": "Encounter/57"
+        },
+        "agent": [ {
+          "who": {
+            "reference": "Practitioner/61"
+          }
+        } ]
       },
       "search": {
         "mode": "match"
