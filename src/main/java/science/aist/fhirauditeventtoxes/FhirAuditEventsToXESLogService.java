@@ -11,9 +11,9 @@ package science.aist.fhirauditeventtoxes;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import lombok.SneakyThrows;
 import org.hl7.fhir.r5.model.AuditEvent;
 import org.hl7.fhir.r5.model.Bundle;
-import org.hl7.fhir.r5.model.Reference;
 import science.aist.gtf.transformation.Transformer;
 import science.aist.xes.model.LogType;
 import science.aist.xes.model.ObjectFactory;
@@ -37,15 +37,32 @@ public class FhirAuditEventsToXESLogService {
     private final ObjectFactory factory;
     private final Transformer<Collection<AuditEvent>, LogType> transformer;
 
+
     /**
      * Initializes the transformers and renderers
      */
     public FhirAuditEventsToXESLogService() {
+        this(
+                ae -> ae.getBasedOnFirstRep().getReference(),
+                ae -> ae.getEncounter().getReference(),
+                ae -> ae.getCode().getCodingFirstRep().getDisplay()
+        );
+    }
+
+    @SneakyThrows
+    public FhirAuditEventsToXESLogService(String logConceptNameResolverPath, String traceConceptNameResolverPath, String eventConceptNameResolverPath) {
+        this(
+                ReflectionUtil.createFunctionChain(AuditEvent.class, logConceptNameResolverPath),
+                ReflectionUtil.createFunctionChain(AuditEvent.class, traceConceptNameResolverPath),
+                ReflectionUtil.createFunctionChain(AuditEvent.class, eventConceptNameResolverPath)
+        );
+    }
+
+    public FhirAuditEventsToXESLogService(Function<AuditEvent, String> logConceptNameResolver, Function<AuditEvent, String> traceConceptNameResolver, Function<AuditEvent, String> eventConceptNameResolver) {
         factory = new ObjectFactory();
-        Function<AuditEvent, String> encounterSelector = ae -> ae.getEncounter().getReference();
-        var eventRenderer = new EventRenderer(factory, Reference::getReference);
-        var traceRenderer = new TraceRenderer(factory, eventRenderer, encounterSelector);
-        transformer = new FhirAuditEventsToXESLogTransformer(factory, traceRenderer, encounterSelector);
+        var eventRenderer = new EventRenderer(factory, eventConceptNameResolver);
+        var traceRenderer = new TraceRenderer(factory, eventRenderer, traceConceptNameResolver);
+        transformer = new FhirAuditEventsToXESLogTransformer(factory, traceRenderer, logConceptNameResolver, traceConceptNameResolver);
     }
 
     /**
