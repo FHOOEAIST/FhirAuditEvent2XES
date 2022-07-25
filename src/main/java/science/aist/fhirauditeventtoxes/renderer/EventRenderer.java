@@ -7,10 +7,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package science.aist.fhirauditeventtoxes;
+package science.aist.fhirauditeventtoxes.renderer;
 
 import lombok.AllArgsConstructor;
 import org.hl7.fhir.r5.model.AuditEvent;
+import science.aist.fhirauditeventtoxes.DateUtil;
 import science.aist.gtf.transformation.renderer.TransformationRender;
 import science.aist.xes.model.AttributeDateType;
 import science.aist.xes.model.AttributeStringType;

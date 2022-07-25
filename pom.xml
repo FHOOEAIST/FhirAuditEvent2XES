@@ -69,13 +69,13 @@
         </snapshotRepository>
         <site>
             <id>javadoc</id>
-            <url>scm:git:ssh://git@github.com/FHOOEAIST/xes-model.git</url>
+            <url>scm:git:ssh://git@github.com/FHOOEAIST/FhirAuditEvent2XES.git</url>
         </site>
     </distributionManagement>
 
     <name>FhirAuditEvent2XES</name>
     <description>FhirAuditEvent2XES</description>
-    <url>https://github.com/FHOOEAIST/xes-model</url>
+    <url>https://github.com/FHOOEAIST/FhirAuditEvent2XES</url>
     <organization>
         <name>Advanced Information Systems and Technology</name>
         <url>http://aist.science</url>
