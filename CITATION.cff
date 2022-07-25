@@ -1,19 +1,36 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Pointner"
-  given-names: "Andreas"
-  orcid: "https://orcid.org/0000-0001-8642-1161"
-- family-names: "Krauss"
-  given-names: "Oliver"
-  orcid: "https://orcid.org/0000-0002-8136-2606"
-- family-names: "Schuler"
-  given-names: "Andreas"
-  orcid: "https://orcid.org/0000-0003-1074-3222"
-- family-names: "Helm"
-  given-names: "Emmanuel"
-  orcid: "https://orcid.org/0000-0002-1323-3511"
-title: "FhirAuditEvent2XES"
-version: 1.0.0
+ - family-names: "Pointner"
+   given-names: "Andreas"
+   email: "andreas.pointner@fh-hagenberg.at"
+   orcid: "https://orcid.org/0000-0001-8642-1161"
+   affiliation: "Advanced Information Systems and Technology"
+ - family-names: "Krauss"
+   given-names: "Oliver"
+   email: "oliver.krauss@fh-hagenberg.at"
+   orcid: "https://orcid.org/0000-0002-8136-2606"
+   affiliation: "Advanced Information Systems and Technology"
+ - family-names: "Schuler"
+   given-names: "Andreas"
+   email: "andreas.schuler@fh-hagenberg.at"
+   orcid: "https://orcid.org/0000-0003-1074-3222"
+   affiliation: "Advanced Information Systems and Technology"
+ - family-names: "Helm"
+   given-names: "Emmanuel"
+   email: "emmanuel.helm@fh-hagenberg.at"
+   orcid: "https://orcid.org/0000-0002-1323-3511"
+   affiliation: "Advanced Information Systems and Technology"
+cff-version: 1.2.0
 date-released: 2022-07-25
-url: "https://github.com/FHOOEAIST/FhirAuditEvent2XES"
+keywords:
+  - HL7® FHIR® AuditEvent
+  - XES
+  - Transformation
+license: MPL-2.0
+message: "If you use this software, please cite it as below."
+repository-artifact: "https://search.maven.org/artifact/science.aist/fhir-audit-event-to-xes/1.0.0/jar"
+repository-code: "https://github.com/FHOOEAIST/FhirAuditEvent2XES"
+title: "Transformation from HL7® FHIR® AuditEvent to XES"
+type: software
+url: "https://github.aist.science/FhirAuditEvent2XES/"
+version: 1.0.0
+
