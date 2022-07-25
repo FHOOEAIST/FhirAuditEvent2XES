@@ -68,4 +68,4 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 If you are going to use this project as part of a research paper, we would ask you to reference this project by citing
 it. 
 
-<TODO zenodo doi>
+[![DOI](https://zenodo.org/badge/507932096.svg)](https://zenodo.org/badge/latestdoi/507932096)
