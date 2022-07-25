@@ -14,6 +14,10 @@ import ca.uhn.fhir.parser.IParser;
 import lombok.SneakyThrows;
 import org.hl7.fhir.r5.model.AuditEvent;
 import org.hl7.fhir.r5.model.Bundle;
+import science.aist.fhirauditeventtoxes.domain.AuditEventBundle;
+import science.aist.fhirauditeventtoxes.renderer.EventRenderer;
+import science.aist.fhirauditeventtoxes.renderer.LogRenderer;
+import science.aist.fhirauditeventtoxes.renderer.TraceRenderer;
 import science.aist.gtf.transformation.Transformer;
 import science.aist.xes.model.LogType;
 import science.aist.xes.model.ObjectFactory;
@@ -35,7 +39,7 @@ import java.util.stream.Collectors;
 public class FhirAuditEventsToXESLogService {
 
     private final ObjectFactory factory;
-    private final Transformer<Collection<AuditEvent>, LogType> transformer;
+    private final Transformer<AuditEventBundle, LogType> transformer;
 
 
     /**
@@ -43,36 +47,35 @@ public class FhirAuditEventsToXESLogService {
      */
     public FhirAuditEventsToXESLogService() {
         this(
-                ae -> ae.getBasedOnFirstRep().getReference(),
                 ae -> ae.getEncounter().getReference(),
                 ae -> ae.getCode().getCodingFirstRep().getDisplay()
         );
     }
 
     @SneakyThrows
-    public FhirAuditEventsToXESLogService(String logConceptNameResolverPath, String traceConceptNameResolverPath, String eventConceptNameResolverPath) {
+    public FhirAuditEventsToXESLogService(String traceConceptNameResolverPath, String eventConceptNameResolverPath) {
         this(
-                ReflectionUtil.createFunctionChain(AuditEvent.class, logConceptNameResolverPath),
                 ReflectionUtil.createFunctionChain(AuditEvent.class, traceConceptNameResolverPath),
                 ReflectionUtil.createFunctionChain(AuditEvent.class, eventConceptNameResolverPath)
         );
     }
 
-    public FhirAuditEventsToXESLogService(Function<AuditEvent, String> logConceptNameResolver, Function<AuditEvent, String> traceConceptNameResolver, Function<AuditEvent, String> eventConceptNameResolver) {
+    public FhirAuditEventsToXESLogService(Function<AuditEvent, String> traceConceptNameResolver, Function<AuditEvent, String> eventConceptNameResolver) {
         factory = new ObjectFactory();
         var eventRenderer = new EventRenderer(factory, eventConceptNameResolver);
         var traceRenderer = new TraceRenderer(factory, eventRenderer, traceConceptNameResolver);
-        transformer = new FhirAuditEventsToXESLogTransformer(factory, traceRenderer, logConceptNameResolver, traceConceptNameResolver);
+        var logRenderer = new LogRenderer(factory, traceRenderer, traceConceptNameResolver);
+        transformer = new FhirAuditEventsToXESLogTransformer(logRenderer);
     }
 
     /**
      * Use the transformer to transform from a {@link Collection} of {@link AuditEvent}s into a {@link LogType}
      *
-     * @param auditEvents the collection of audit events
+     * @param bundle the collection of audit events
      * @return the resulting xes log
      */
-    public LogType convertFhirAuditEventsToXESLog(Collection<AuditEvent> auditEvents) {
-        return transformer.applyTransformation(auditEvents);
+    public LogType convertFhirAuditEventsToXESLog(AuditEventBundle bundle) {
+        return transformer.applyTransformation(bundle);
     }
 
     /**
@@ -81,7 +84,7 @@ public class FhirAuditEventsToXESLogService {
      * @param auditBundleInputStream an input stream to a bundle of audit logs
      * @param logOutputStream        and output stream where the resulting log should be written to
      */
-    public void convertFhirAuditEventsToXESLog(InputStream auditBundleInputStream, OutputStream logOutputStream) {
+    public void convertFhirAuditEventsToXESLog(InputStream auditBundleInputStream, String planDefinition, OutputStream logOutputStream) {
         // Create fhir context and parse
         FhirContext ctx = FhirContext.forR5();
         IParser parser = ctx.newJsonParser();
@@ -92,7 +95,7 @@ public class FhirAuditEventsToXESLogService {
         Collection<AuditEvent> auditEvents = auditEventBundle.getEntry().stream().map(Bundle.BundleEntryComponent::getResource).map(AuditEvent.class::cast).collect(Collectors.toList());
 
         // convert the audit events into a log
-        LogType logType = convertFhirAuditEventsToXESLog(auditEvents);
+        LogType logType = convertFhirAuditEventsToXESLog(new AuditEventBundle(planDefinition, auditEvents));
 
         // write the xes log on the output stream
         XMLRepository<LogType> repository = new LogRepository();

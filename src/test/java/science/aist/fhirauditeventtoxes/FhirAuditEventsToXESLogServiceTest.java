@@ -9,7 +9,6 @@
 
 package science.aist.fhirauditeventtoxes;
 
-import org.hl7.fhir.r5.model.AuditEvent;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -28,14 +27,13 @@ public class FhirAuditEventsToXESLogServiceTest {
     public void testConvertFhirAuditEventsToXESLog() {
         // given
         FhirAuditEventsToXESLogService service = new FhirAuditEventsToXESLogService(
-                "getBasedOnFirstRep.getReference",
-                "getCode.getCodingFirstRep.getDisplay",
-                "getEncounter.getReference"
-                );
+                "getEncounter.getReference",
+                "getCode.getCodingFirstRep.getDisplay"
+        );
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         // when
-        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/auditEventBundle.json"), outputStream);
+        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/radwfAuditEventBundle.json"), "PlanDefinition/1", outputStream);
 
         // then
         String res = outputStream.toString(StandardCharsets.UTF_8);

@@ -11,6 +11,7 @@ package science.aist.fhirauditeventtoxes;
 
 import lombok.AllArgsConstructor;
 import org.hl7.fhir.r5.model.AuditEvent;
+import science.aist.fhirauditeventtoxes.domain.AuditEventBundle;
 import science.aist.gtf.transformation.Transformer;
 import science.aist.gtf.transformation.renderer.TransformationRender;
 import science.aist.xes.model.*;
@@ -30,73 +31,12 @@ import java.util.stream.Stream;
  * @since 1.0
  */
 @AllArgsConstructor
-public class FhirAuditEventsToXESLogTransformer implements Transformer<Collection<AuditEvent>, LogType> {
+public class FhirAuditEventsToXESLogTransformer implements Transformer<AuditEventBundle, LogType> {
 
-    private final ObjectFactory factory;
-    private final TransformationRender<TraceType, TraceType, List<AuditEvent>, List<AuditEvent>> traceRenderer;
-
-    private final Function<AuditEvent, String> conceptNameResolver;
-    private final Function<AuditEvent, ?> groupingSelector;
-
+    private final TransformationRender<LogType, LogType, AuditEventBundle, Collection<AuditEvent>> logTypeTransformationRenderer;
 
     @Override
-    public LogType applyTransformation(Collection<AuditEvent> auditEvents) {
-        // Create a mapping for the different concept Names at log level
-        Map<String, List<AuditEvent>> collect = auditEvents.stream().collect(Collectors.groupingBy(conceptNameResolver));
-        if (collect.size() > 1) {
-            throw new IllegalStateException("XES logs do not support more than one concept:name at log level. Consider changing conceptNameResolver");
-        }
-
-        return collect.entrySet().stream().map(conceptNameAuditEventElements -> {
-            LogType logType = factory.createLogType();
-
-            // Define base attributes
-            logType.setXesVersion(BigDecimal.valueOf(1.0));
-
-            // create extensions types
-            Stream.of(timeExtension(), lifecycleExtension(), conceptExtension()).forEach(logType.getExtension()::add);
-            AttributeStringType conceptName = factory.createAttributeStringType();
-            conceptName.setKey("concept:name");
-            conceptName.setValue(conceptNameAuditEventElements.getKey());
-            logType.getStringOrDateOrInt().add(conceptName);
-
-            // create traces
-            conceptNameAuditEventElements.getValue().stream().collect(Collectors.groupingBy(groupingSelector)).forEach(
-                    (ignore, events) -> logType.getTrace().add(traceRenderer.renderElement(events, events))
-            );
-            return logType;
-        }).findFirst().orElseThrow();
-    }
-
-    private ExtensionType timeExtension() {
-        return createExtension(
-                "Time",
-                "time",
-                "http://www.xes-standard.org/time.xesext"
-        );
-    }
-
-    private ExtensionType lifecycleExtension() {
-        return createExtension(
-                "Lifecycle",
-                "lifecycle",
-                "http://www.xes-standard.org/lifecycle.xesext"
-        );
-    }
-
-    private ExtensionType conceptExtension() {
-        return createExtension(
-                "Concept",
-                "concept",
-                "http://www.xes-standard.org/concept.xesext"
-        );
-    }
-
-    private ExtensionType createExtension(String name, String prefix, String uri) {
-        ExtensionType conceptExtension = factory.createExtensionType();
-        conceptExtension.setName(name);
-        conceptExtension.setPrefix(prefix);
-        conceptExtension.setUri(uri);
-        return conceptExtension;
+    public LogType applyTransformation(AuditEventBundle auditEventBundle) {
+        return logTypeTransformationRenderer.renderElement(auditEventBundle, auditEventBundle.getAuditEvents());
     }
 }
