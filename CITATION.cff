@@ -21,6 +21,7 @@ authors:
    affiliation: "Advanced Information Systems and Technology"
 cff-version: 1.2.0
 date-released: 2022-07-25
+doi: "https://doi.org/10.5281/zenodo.6901825"
 keywords:
   - HL7® FHIR® AuditEvent
   - XES
