@@ -33,7 +33,7 @@ public class FhirAuditEventsToXESLogServiceTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         // when
-        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/radwfAuditEventBundle.json"), "PlanDefinition/1", outputStream);
+        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/auditEvents.json"), "PlanDefinition/1", outputStream);
 
         // then
         String res = outputStream.toString(StandardCharsets.UTF_8);

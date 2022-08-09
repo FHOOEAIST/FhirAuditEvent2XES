@@ -29,7 +29,7 @@ import java.util.function.Function;
  * @since 1.0
  */
 @AllArgsConstructor
-public class EventRenderer implements TransformationRender<List<EventType>, EventType, List<AuditEvent>, AuditEvent> {
+public class EventRenderer implements TransformationRender<EventType, EventType, List<AuditEvent>, AuditEvent> {
 
     /**
      * XML object factory to create the element
@@ -42,16 +42,8 @@ public class EventRenderer implements TransformationRender<List<EventType>, Even
     private final Function<AuditEvent, String> conceptNameResolver;
 
     @Override
-    public List<EventType> renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
-        EventType start = mapProperties(createElement(), auditEvents, currentElement);
-        addTimestamp(start, currentElement, ae -> ae.getOccurredPeriod().getStart());
-        addLifecycleTransition(start, currentElement, ae -> "start");
-
-        EventType end = mapProperties(createElement(), auditEvents, currentElement);
-        addTimestamp(end, currentElement, ae -> ae.getOccurredPeriod().getEnd());
-        addLifecycleTransition(end, currentElement, ae -> "complete");
-
-        return List.of(start, end);
+    public EventType renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
+        return mapProperties(createElement(), auditEvents, currentElement);
     }
 
     @Override
@@ -67,20 +59,17 @@ public class EventRenderer implements TransformationRender<List<EventType>, Even
         conceptName.setValue(conceptNameResolver.apply(currentElement));
         eventType.getStringOrDateOrInt().add(conceptName);
 
+        AttributeDateType timestamp = factory.createAttributeDateType();
+        timestamp.setKey("time:timestamp");
+        timestamp.setValue(DateUtil.dateToGregorianCalendar(currentElement.getOccurredDateTimeType().getValue()));
+        eventType.getStringOrDateOrInt().add(timestamp);
+
+        AttributeStringType lifecycleTransition = factory.createAttributeStringType();
+        lifecycleTransition.setKey("lifecycle:transition");
+        lifecycleTransition.setValue("complete");
+        eventType.getStringOrDateOrInt().add(lifecycleTransition);
+
         return eventType;
     }
 
-    private void addTimestamp(EventType eventType, AuditEvent currentElement, Function<AuditEvent, Date> timestampSelector) {
-        AttributeDateType timestamp = factory.createAttributeDateType();
-        timestamp.setKey("time:timestamp");
-        timestamp.setValue(DateUtil.dateToGregorianCalendar(timestampSelector.apply(currentElement)));
-        eventType.getStringOrDateOrInt().add(timestamp);
-    }
-
-    private void addLifecycleTransition(EventType eventType, AuditEvent currentElement, Function<AuditEvent, String> lifecycleTransitionSelector) {
-        AttributeStringType lifecycleTransition = factory.createAttributeStringType();
-        lifecycleTransition.setKey("lifecycle:transition");
-        lifecycleTransition.setValue(lifecycleTransitionSelector.apply(currentElement));
-        eventType.getStringOrDateOrInt().add(lifecycleTransition);
-    }
 }
