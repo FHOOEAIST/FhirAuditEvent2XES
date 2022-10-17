@@ -13,7 +13,7 @@
 
     <groupId>science.aist</groupId>
     <artifactId>fhir-audit-event-to-xes</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
 
     <properties>
         <testng.version>7.6.0</testng.version>
@@ -54,7 +54,7 @@
         <connection>scm:git:git@github.com:FHOOEAIST/FhirAuditEvent2XES.git</connection>
         <url>https://github.com/FHOOEAIST/FhirAuditEvent2XES</url>
         <developerConnection>scm:git:git@github.com:FHOOEAIST/FhirAuditEvent2XES.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>fhir-auditevent-to-xes-1.1.1</tag>
     </scm>
     <distributionManagement>
         <repository>
