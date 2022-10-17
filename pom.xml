@@ -26,6 +26,7 @@
         <lombok.version>1.18.24</lombok.version>
         <hapi-fhir-structures-r5.version>6.0.2</hapi-fhir-structures-r5.version>
         <xes-model.version>1.0.0</xes-model.version>
+        <transformation.version>2.0.1</transformation.version>
 
         <!-- set platform source encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +47,6 @@
         <sonar.jacoco.reportPaths>${project.jacoco.ut.reportPath},${project.jacoco.it.reportPath}</sonar.jacoco.reportPaths>
         <sonar.java.libraries>${project.build.directory}/dependency</sonar.java.libraries>
         <sonar-jacoco-listeners.version>5.14.0.18788</sonar-jacoco-listeners.version>
-        <transformation.version>2.0.0</transformation.version>
     </properties>
 
 
