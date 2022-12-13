@@ -2,11 +2,17 @@
 
 The changelog should give you a quick overview of what change between the different Fhir Audit Event to XES versions.
 
+## Version 1.1.2
+
+### Dependencies
+
+- ([7](https://github.com/FHOOEAIST/FhirAuditEvent2XES/issues/7)) Upgrade Hapi Fhir Structures to 5.2.2 
+
 ## Version 1.1.1
 
 ### Dependencies
 
-- ([5](https://github.com/FHOOEAIST/FhirAuditEvent2XES/pull/6)) Updated to most recent GTF version
+- ([5](https://github.com/FHOOEAIST/FhirAuditEvent2XES/issues/5)) Updated to most recent GTF version
 
 ## Version 1.1.0
 
