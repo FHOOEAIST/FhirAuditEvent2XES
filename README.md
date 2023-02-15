@@ -1,6 +1,9 @@
 # Fhir Audit Event to XES
 
-This project contains methods to convert a set of audit events into a XES representation.
+This project contains methods to convert a set of Fhir R5 AuditEvents into a XES representation. The transformation is
+shown in the following image:
+
+![Transformation](documentation/transformation.png)
 
 ## Getting Started
 
