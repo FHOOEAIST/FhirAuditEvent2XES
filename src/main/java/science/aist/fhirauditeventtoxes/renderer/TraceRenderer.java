@@ -30,7 +30,7 @@ import java.util.function.Function;
 public class TraceRenderer implements TransformationRender<TraceType, TraceType, List<AuditEvent>, List<AuditEvent>> {
 
     private final ObjectFactory factory;
-    private final TransformationRender<EventType, EventType, List<AuditEvent>, AuditEvent> eventRenderer;
+    private final TransformationRender<List<EventType>, List<EventType>, List<AuditEvent>, AuditEvent> eventRenderer;
     private final Function<AuditEvent, String> conceptNameResolver;
 
     @Override
@@ -57,7 +57,7 @@ public class TraceRenderer implements TransformationRender<TraceType, TraceType,
         // Create the events
         currentElement.stream()
                 .map(auditEvent -> eventRenderer.renderElement(currentElement, auditEvent))
-                .forEach(traceType.getEvent()::add);
+                .forEach(traceType.getEvent()::addAll);
 
         return traceType;
     }
