@@ -18,6 +18,7 @@ import science.aist.xes.model.AttributeStringType;
 import science.aist.xes.model.EventType;
 import science.aist.xes.model.ObjectFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -29,7 +30,7 @@ import java.util.function.Function;
  * @since 1.0
  */
 @AllArgsConstructor
-public class EventRenderer implements TransformationRender<EventType, EventType, List<AuditEvent>, AuditEvent> {
+public class EventRenderer implements TransformationRender<List<EventType>, List<EventType>, List<AuditEvent>, AuditEvent> {
 
     /**
      * XML object factory to create the element
@@ -42,17 +43,37 @@ public class EventRenderer implements TransformationRender<EventType, EventType,
     private final Function<AuditEvent, String> conceptNameResolver;
 
     @Override
-    public EventType renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
+    public List<EventType> renderElement(List<AuditEvent> auditEvents, AuditEvent currentElement) {
         return mapProperties(createElement(), auditEvents, currentElement);
     }
 
     @Override
-    public EventType createElement() {
-        return factory.createEventType();
+    public List<EventType> createElement() {
+        return new ArrayList<>();
     }
 
     @Override
-    public EventType mapProperties(EventType eventType, List<AuditEvent> auditEvents, AuditEvent currentElement) {
+    public List<EventType> mapProperties(List<EventType> eventType, List<AuditEvent> auditEvents, AuditEvent currentElement) {
+        if (currentElement.hasOccurredDateTimeType()) {
+            EventType complete = createEvent(currentElement, currentElement.getOccurredDateTimeType().getValue(), "complete");
+            eventType.add(complete);
+        } else if(currentElement.hasOccurredPeriod()) {
+            if (!(currentElement.getOccurredPeriod().hasStart() && currentElement.getOccurredPeriod().hasEnd())) {
+                throw new IllegalStateException("Must have both OccurredPeriod start and end value set.");
+            }
+            EventType start = createEvent(currentElement, currentElement.getOccurredPeriod().getStart(), "start");
+            eventType.add(start);
+            EventType complete = createEvent(currentElement, currentElement.getOccurredPeriod().getEnd(), "complete");
+            eventType.add(complete);
+        } else {
+            throw new IllegalStateException("AuditEvent must either have occurredPeriod or occurredDateTime value.");
+        }
+
+        return eventType;
+    }
+
+    public EventType createEvent(AuditEvent currentElement, Date date, String lifeCycleTransition) {
+        EventType eventType = factory.createEventType();
         AttributeStringType conceptName = factory.createAttributeStringType();
 
         conceptName.setKey("concept:name");
@@ -61,12 +82,12 @@ public class EventRenderer implements TransformationRender<EventType, EventType,
 
         AttributeDateType timestamp = factory.createAttributeDateType();
         timestamp.setKey("time:timestamp");
-        timestamp.setValue(DateUtil.dateToGregorianCalendar(currentElement.getOccurredDateTimeType().getValue()));
+        timestamp.setValue(DateUtil.dateToGregorianCalendar(date));
         eventType.getStringOrDateOrInt().add(timestamp);
 
         AttributeStringType lifecycleTransition = factory.createAttributeStringType();
         lifecycleTransition.setKey("lifecycle:transition");
-        lifecycleTransition.setValue("complete");
+        lifecycleTransition.setValue(lifeCycleTransition);
         eventType.getStringOrDateOrInt().add(lifecycleTransition);
 
         return eventType;

@@ -40,4 +40,38 @@ public class FhirAuditEventsToXESLogServiceTest {
         Assert.assertNotNull(res);
         System.out.println(res);
     }
+
+    @Test
+    public void testConvertFhirAuditEventsToXESLog2() {
+        // given
+        FhirAuditEventsToXESLogService service = new FhirAuditEventsToXESLogService(
+                "getEncounter.getReference",
+                "getCode.getCodingFirstRep.getDisplay"
+        );
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // when
+        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/auditEvents2.json"), "PlanDefinition/1", outputStream);
+
+        // then
+        String res = outputStream.toString(StandardCharsets.UTF_8);
+        Assert.assertNotNull(res);
+        System.out.println(res);
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void testConvertFhirAuditEventsToXESLog3() {
+        // given
+        FhirAuditEventsToXESLogService service = new FhirAuditEventsToXESLogService(
+                "getEncounter.getReference",
+                "getCode.getCodingFirstRep.getDisplay"
+        );
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // when
+        service.convertFhirAuditEventsToXESLog(getClass().getResourceAsStream("/auditEvents3.json"), "PlanDefinition/1", outputStream);
+
+        // then
+        // expected exception no end at period set
+    }
 }
