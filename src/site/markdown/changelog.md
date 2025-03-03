@@ -2,6 +2,11 @@
 
 The changelog should give you a quick overview of what change between the different Fhir Audit Event to XES versions.
 
+## Version 1.2.0
+
+ - ([10](https://github.com/FHOOEAIST/FhirAuditEvent2XES/issues/10)) Added DateTime Support for Period
+ - ([11](https://github.com/FHOOEAIST/FhirAuditEvent2XES/issues/11)) Updated Lombok to 1.18.30 to be compatible to Java 21
+
 ## Version 1.1.2
 
 ### Dependencies
